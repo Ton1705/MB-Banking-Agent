@@ -1,0 +1,19 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-typescript-next",
+    "vscjava.vscode-java-pack",
+    "vmware.vscode-boot-dev-pack",
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg",
+    "eamodio.gitlens",
+    "humao.rest-client",
+    "rangav.vscode-thunder-client",
+    "usernamehw.errorlens",
+    "formulahendry.auto-rename-tag",
+    "PKief.material-icon-theme",
+    "christian-kohler.path-intellisense"
+  ]
+}

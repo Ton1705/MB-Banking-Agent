@@ -1,0 +1,77 @@
+spring:
+  application:
+    name: mb-banking-agent
+
+  # ─── Database ────────────────────────────────────────────────
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mb_banking
+    username: postgres
+    password: khanhngoc2012
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: MB-HikariPool
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  # ─── JPA / Hibernate ────────────────────────────────────────
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  # ─── Jackson ─────────────────────────────────────────────────
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+    time-zone: Asia/Ho_Chi_Minh
+
+# ─── Server ──────────────────────────────────────────────────
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# ─── Actuator ────────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  info:
+    app:
+      enabled: true
+
+# ─── Logging ─────────────────────────────────────────────────
+logging:
+  level:
+    com.mbbanking: DEBUG
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# ─── App Custom Properties ────────────────────────────────────
+app:
+  jwt:
+    secret: MB_BANKING_AGENT_JWT_SECRET_KEY_MUST_BE_AT_LEAST_256_BITS_LONG_CHANGE_IN_PROD
+    expiration: 86400000   # 24 giờ (ms)
+  cors:
+    allowed-origins: http://localhost:5173
