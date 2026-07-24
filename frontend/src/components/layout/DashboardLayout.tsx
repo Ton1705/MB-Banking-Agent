@@ -4,11 +4,11 @@ import { Header } from './Header';
 
 export function DashboardLayout() {
   return (
-    <div className="flex h-screen w-full bg-slate-50 overflow-hidden font-sans">
+    <div className="flex h-screen w-full bg-[hsl(210,20%,98%)] overflow-hidden font-sans">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header />
-        <main className="flex-1 overflow-y-auto p-6 md:p-8">
+        <main className="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar">
           <Outlet />
         </main>
       </div>
