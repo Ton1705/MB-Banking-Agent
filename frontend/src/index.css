@@ -1,6 +1,20 @@
 @import 'tailwindcss';
 
 @theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* ─── MB Brand Colors ─────────────────────────────── */
+  --color-mb-navy: #0D2B5C;
+  --color-mb-navy-light: #132F5E;
+  --color-mb-blue: #1A4B8C;
+  --color-mb-blue-light: #2563EB;
+  --color-mb-cyan: #00B4D8;
+  --color-mb-cyan-light: #4FE0D0;
+  --color-mb-red: #E63946;
+  --color-mb-light: #E8F4FD;
+  --color-mb-gold: #F4A300;
+
+  /* ─── Shadcn Theme Tokens ─────────────────────────── */
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
@@ -23,16 +37,24 @@
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
+
+  /* ─── Animations ──────────────────────────────────── */
+  --animate-fade-in: fade-in 0.5s ease-out;
+  --animate-slide-up: slide-up 0.5s ease-out;
+  --animate-slide-down: slide-down 0.3s ease-out;
+  --animate-scale-in: scale-in 0.2s ease-out;
+  --animate-shimmer: shimmer 2s infinite linear;
 }
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 20% 98%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 217 71% 30%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -44,8 +66,8 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
+    --ring: 217 71% 30%;
+    --radius: 0.625rem;
   }
 
   .dark {
@@ -79,4 +101,77 @@
     @apply bg-background text-foreground;
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
+}
+
+/* ─── Keyframes ─────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ─── Utilities ─────────────────────────────────────── */
+.glass {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mb-gradient {
+  background: linear-gradient(135deg, #0D2B5C 0%, #1A4B8C 100%);
+}
+
+.mb-gradient-light {
+  background: linear-gradient(135deg, #1A4B8C 0%, #2563EB 50%, #00B4D8 100%);
+}
+
+.mb-gradient-cyan {
+  background: linear-gradient(135deg, #4FE0D0 0%, #00B4D8 100%);
+}
+
+.mb-gradient-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* ─── Custom scrollbar ──────────────────────────────── */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
