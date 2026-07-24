@@ -1,162 +1,238 @@
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { CheckCircle2, Loader2, Sparkles, Lock } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { mockAccounts } from '@/lib/mock-data';
-import { Send, AlertCircle, CheckCircle2 } from 'lucide-react';
+
+const formatVND = (amount: number) => {
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+};
 
 export function Transfer() {
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState(1);
   const [amount, setAmount] = useState('');
-  
+  const [loading, setLoading] = useState(false);
+
+  const handleNext = () => {
+    if (step < 3) {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        setStep(step + 1);
+      }, 600);
+    }
+  };
+
+  const handleReset = () => {
+    setStep(1);
+    setAmount('');
+  };
+
+  const quickAmounts = [
+    { label: '100K', value: '100000' },
+    { label: '500K', value: '500000' },
+    { label: '1M', value: '1000000' },
+    { label: '5M', value: '5000000' },
+    { label: '10M', value: '10000000' },
+  ];
+
   return (
-    <div data-page="transfer" className="space-y-6 max-w-3xl mx-auto animate-in fade-in duration-500">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Chuyển tiền</h1>
-        <p className="text-slate-500">Chuyển tiền an toàn và nhanh chóng</p>
+    <div className="max-w-2xl mx-auto space-y-6 animate-fade-in" data-page="transfer">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-mb-navy">Chuyển tiền</h1>
+        <p className="text-gray-500 mt-2">Nhanh chóng, an toàn và bảo mật</p>
       </div>
 
-      {step === 1 && (
-        <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle>Thông tin giao dịch</CardTitle>
-            <CardDescription>Nhập thông tin người nhận và số tiền</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Tài khoản nguồn</label>
-              <Select defaultValue={mockAccounts[0].accountNumber}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Chọn tài khoản" />
-                </SelectTrigger>
-                <SelectContent>
-                  {mockAccounts.map(acc => (
-                    <SelectItem key={acc.id} value={acc.accountNumber}>
-                      {acc.accountNumber} - Số dư: {new Intl.NumberFormat('vi-VN').format(acc.balance)} VND
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+      {/* Step Indicator */}
+      <div className="flex items-center justify-center mb-8">
+        <div className="flex items-center w-full max-w-sm">
+          <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${step >= 1 ? 'bg-mb-blue text-white' : 'bg-gray-200 text-gray-500'}`}>1</div>
+          <div className={`flex-1 h-1 mx-2 ${step >= 2 ? 'bg-mb-blue' : 'bg-gray-200'}`}></div>
+          <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${step >= 2 ? 'bg-mb-blue text-white' : 'bg-gray-200 text-gray-500'}`}>2</div>
+          <div className={`flex-1 h-1 mx-2 ${step >= 3 ? 'bg-mb-blue' : 'bg-gray-200'}`}></div>
+          <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${step >= 3 ? 'bg-mb-blue text-white' : 'bg-gray-200 text-gray-500'}`}>3</div>
+        </div>
+      </div>
 
-            <div className="grid grid-cols-2 gap-4">
+      <Card className="shadow-lg border-0 bg-white">
+        {step === 1 && (
+          <div className="animate-slide-up">
+            <CardHeader>
+              <CardTitle className="text-xl">Thông tin chuyển tiền</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-5">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Ngân hàng hưởng</label>
-                <Select defaultValue="mb">
-                  <SelectTrigger>
+                <label className="text-sm font-medium text-gray-700">Tài khoản nguồn</label>
+                <Select defaultValue={mockAccounts[0]?.id}>
+                  <SelectTrigger className="w-full h-12">
+                    <SelectValue placeholder="Chọn tài khoản" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mockAccounts.map(acc => (
+                      <SelectItem key={acc.id} value={acc.id}>
+                        {acc.accountNumber} - {formatVND(acc.balance)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Ngân hàng thụ hưởng</label>
+                <Select defaultValue="vcb">
+                  <SelectTrigger className="w-full h-12">
                     <SelectValue placeholder="Chọn ngân hàng" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="mb">MB Bank</SelectItem>
                     <SelectItem value="vcb">Vietcombank</SelectItem>
                     <SelectItem value="tcb">Techcombank</SelectItem>
-                    <SelectItem value="bidv">BIDV</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
+
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Số tài khoản hưởng</label>
-                <Input data-testid="destination-account-input" placeholder="Nhập số tài khoản" />
+                <label className="text-sm font-medium text-gray-700">Số tài khoản / Thẻ</label>
+                <Input placeholder="Nhập số tài khoản" className="h-12" data-component="account-input" />
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Tên người hưởng</label>
-              <Input placeholder="Tên người nhận (tự động tra cứu)" disabled />
-            </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Số tiền (VND)</label>
+                <Input 
+                  type="number" 
+                  value={amount} 
+                  onChange={(e) => setAmount(e.target.value)} 
+                  placeholder="0" 
+                  className="h-12 text-lg font-semibold"
+                  data-component="amount-input"
+                />
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {quickAmounts.map((q) => (
+                    <Button 
+                      key={q.value} 
+                      type="button" 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setAmount(q.value)}
+                      className="border-mb-cyan text-mb-blue hover:bg-mb-light"
+                      data-action={`quick-amount-${q.value}`}
+                    >
+                      {q.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Số tiền (VND)</label>
-              <Input 
-                data-testid="amount-input"
-                type="number" 
-                placeholder="0" 
-                value={amount}
-                onChange={(e: any) => setAmount(e.target.value)}
-                className="text-lg font-semibold"
-              />
-            </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Nội dung</label>
+                <Input placeholder="Chuyen tien" className="h-12" data-component="memo-input" />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button 
+                onClick={handleNext} 
+                className="w-full h-12 bg-mb-blue hover:bg-mb-navy text-white text-lg font-medium"
+                disabled={loading || !amount}
+                data-action="next-step"
+              >
+                {loading ? <Loader2 className="animate-spin h-5 w-5" /> : 'Tiếp tục'}
+              </Button>
+            </CardFooter>
+          </div>
+        )}
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Nội dung chuyển tiền</label>
-              <Input placeholder="Nhập nội dung" defaultValue="LE KHANH NGOC chuyen tien" />
-            </div>
-          </CardContent>
-          <CardFooter className="bg-slate-50 py-4 border-t flex justify-end">
-            <Button data-testid="next-step-btn" className="bg-blue-600 hover:bg-blue-700" onClick={() => setStep(2)}>
-              Tiếp tục <Send className="ml-2 w-4 h-4" />
-            </Button>
-          </CardFooter>
-        </Card>
-      )}
+        {step === 2 && (
+          <div className="animate-slide-up">
+            <CardHeader>
+              <CardTitle className="text-xl">Xác nhận giao dịch</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-slate-50 p-4 rounded-xl space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Từ tài khoản</span>
+                  <span className="font-medium">19002838382 (MB)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Đến tài khoản</span>
+                  <span className="font-medium">9876543210 (VCB)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Người nhận</span>
+                  <span className="font-bold text-mb-navy">NGUYEN VAN A</span>
+                </div>
+                <div className="border-t pt-3 flex justify-between items-center">
+                  <span className="text-gray-500">Số tiền</span>
+                  <span className="text-2xl font-bold text-mb-blue">{formatVND(Number(amount))}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Phí giao dịch</span>
+                  <span className="font-medium text-green-600">Miễn phí</span>
+                </div>
+              </div>
+              <div className="bg-amber-50 text-amber-800 p-3 rounded-lg text-sm flex items-start gap-2">
+                <Lock className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                <p>Vui lòng kiểm tra kỹ thông tin trước khi xác nhận. Giao dịch bằng Smart OTP sẽ được tự động điền.</p>
+              </div>
+            </CardContent>
+            <CardFooter className="flex gap-4">
+              <Button variant="outline" className="flex-1 h-12" onClick={() => setStep(1)} data-action="back-step">
+                Quay lại
+              </Button>
+              <Button 
+                onClick={handleNext} 
+                className="flex-1 h-12 bg-mb-gradient text-white text-lg font-medium"
+                disabled={loading}
+                data-action="confirm-transfer"
+              >
+                {loading ? <Loader2 className="animate-spin h-5 w-5" /> : 'Xác nhận'}
+              </Button>
+            </CardFooter>
+          </div>
+        )}
 
-      {step === 2 && (
-        <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle>Xác nhận giao dịch</CardTitle>
-            <CardDescription>Vui lòng kiểm tra kỹ thông tin trước khi xác nhận</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 flex items-start">
-              <AlertCircle className="w-5 h-5 text-blue-500 mt-0.5 mr-3 shrink-0" />
-              <p className="text-sm text-blue-800">Giao dịch sẽ được thực hiện ngay lập tức và không thể hoàn tác.</p>
-            </div>
-            
-            <div className="rounded-md border divide-y">
-              <div className="flex justify-between p-3 text-sm">
-                <span className="text-slate-500">Tài khoản nguồn</span>
-                <span className="font-medium">{mockAccounts[0].accountNumber}</span>
+        {step === 3 && (
+          <div className="animate-scale-in text-center py-8">
+            <CardContent className="space-y-6">
+              <div className="flex justify-center relative">
+                <div className="absolute inset-0 flex items-center justify-center animate-ping opacity-20">
+                  <div className="w-24 h-24 bg-green-400 rounded-full"></div>
+                </div>
+                <CheckCircle2 className="h-24 w-24 text-green-500 relative z-10 bg-white rounded-full" />
+                <Sparkles className="absolute top-0 right-1/3 text-yellow-400 h-6 w-6 animate-pulse" />
               </div>
-              <div className="flex justify-between p-3 text-sm">
-                <span className="text-slate-500">Người hưởng</span>
-                <span className="font-medium">TRẦN VĂN A</span>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Chuyển tiền thành công!</h2>
+                <p className="text-gray-500">Giao dịch của bạn đã được xử lý thành công.</p>
               </div>
-              <div className="flex justify-between p-3 text-sm">
-                <span className="text-slate-500">Ngân hàng</span>
-                <span className="font-medium">Techcombank</span>
+              <div className="bg-slate-50 p-4 rounded-xl inline-block text-left w-full max-w-sm">
+                <div className="flex justify-between mb-2">
+                  <span className="text-gray-500 text-sm">Số tiền</span>
+                  <span className="font-bold text-lg text-mb-navy">{formatVND(Number(amount))}</span>
+                </div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-gray-500 text-sm">Mã giao dịch</span>
+                  <span className="font-mono text-sm text-gray-700">FT{Math.random().toString().slice(2, 10)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500 text-sm">Thời gian</span>
+                  <span className="text-sm text-gray-700">{new Date().toLocaleString('vi-VN')}</span>
+                </div>
               </div>
-              <div className="flex justify-between p-3 text-sm">
-                <span className="text-slate-500">Số tài khoản</span>
-                <span className="font-medium">19033333333</span>
-              </div>
-              <div className="flex justify-between p-3 text-sm">
-                <span className="text-slate-500">Nội dung</span>
-                <span className="font-medium">LE KHANH NGOC chuyen tien</span>
-              </div>
-              <div className="flex justify-between p-4 bg-slate-50 rounded-b-md">
-                <span className="font-semibold text-slate-700">Tổng tiền</span>
-                <span className="text-xl font-bold text-blue-600">
-                  {amount ? new Intl.NumberFormat('vi-VN').format(Number(amount)) : '0'} ₫
-                </span>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="bg-slate-50 py-4 border-t flex gap-3 justify-end">
-            <Button variant="outline" onClick={() => setStep(1)}>Quay lại</Button>
-            <Button data-testid="confirm-transfer-btn" className="bg-blue-600 hover:bg-blue-700" onClick={() => setStep(3)}>Xác nhận chuyển</Button>
-          </CardFooter>
-        </Card>
-      )}
-
-      {step === 3 && (
-        <Card className="shadow-sm text-center py-10">
-          <CardContent className="space-y-4">
-            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
-              <CheckCircle2 className="w-10 h-10 text-green-600" />
-            </div>
-            <h2 className="text-2xl font-bold text-slate-900">Giao dịch thành công</h2>
-            <p className="text-slate-500 max-w-md mx-auto">
-              Bạn đã chuyển {amount ? new Intl.NumberFormat('vi-VN').format(Number(amount)) : '0'} VND tới TRẦN VĂN A.
-            </p>
-            <div className="text-sm text-slate-400">Mã giao dịch: TXN20260724123456</div>
-            <div className="pt-6 flex justify-center gap-4">
-              <Button variant="outline" onClick={() => window.print()}>In biên lai</Button>
-              <Button data-testid="new-transfer-btn" className="bg-blue-600 hover:bg-blue-700" onClick={() => { setStep(1); setAmount(''); }}>Thực hiện giao dịch mới</Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+            </CardContent>
+            <CardFooter className="flex justify-center">
+              <Button 
+                onClick={handleReset} 
+                className="bg-mb-navy hover:bg-mb-blue text-white px-8 h-12"
+                data-action="new-transfer"
+              >
+                Thực hiện giao dịch khác
+              </Button>
+            </CardFooter>
+          </div>
+        )}
+      </Card>
     </div>
   );
 }
