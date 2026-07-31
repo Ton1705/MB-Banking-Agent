@@ -9,10 +9,10 @@ import type {
 // ─── User ─────────────────────────────────────────────────────
 export const mockUser: User = {
   id: 1,
-  username: 'khanhngoc',
-  email: 'khanhngoc@mbbank.vn',
-  fullName: 'Lê Khánh Ngọc',
-  phoneNumber: '0901234567',
+  username: 'nguyenvana',
+  email: 'nguyenvana@mbbank.vn',
+  fullName: 'NGUYEN VAN A',
+  phoneNumber: '0123456789',
   role: 'USER',
   isActive: true,
   createdAt: '2026-01-15T08:00:00',
@@ -27,7 +27,7 @@ export const mockAccounts: Account[] = [
     balance: 125_750_000,
     isActive: true,
     userId: 1,
-    ownerFullName: 'Lê Khánh Ngọc',
+    ownerFullName: 'NGUYEN VAN A',
     createdAt: '2026-01-15T08:00:00',
   },
   {
@@ -37,7 +37,7 @@ export const mockAccounts: Account[] = [
     balance: 450_000_000,
     isActive: true,
     userId: 1,
-    ownerFullName: 'Lê Khánh Ngọc',
+    ownerFullName: 'NGUYEN VAN A',
     createdAt: '2026-02-01T09:30:00',
   },
 ];

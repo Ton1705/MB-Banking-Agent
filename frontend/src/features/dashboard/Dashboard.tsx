@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import api from '@/lib/api';
-import { mockChartData } from '@/lib/mock-data';
+import { mockChartData, mockUser } from '@/lib/mock-data';
 import type { Transaction, DashboardStats } from '@/types';
 
 const formatVND = (amount: number) => {
@@ -54,7 +54,7 @@ export function Dashboard() {
       {/* Welcome Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Xin chào, Lê Khánh Ngọc!</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Xin chào, {mockUser.fullName}!</h1>
           <p className="text-gray-500">{today}</p>
         </div>
       </div>
