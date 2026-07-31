@@ -2,6 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import { X, Mic, Send, MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MessageBubble, type Message } from './MessageBubble';
+import { extractDOMContext } from '@/lib/agent/dom-parser';
+import { processUserIntent } from '@/lib/agent/llm-service';
+import { executeAction } from '@/lib/agent/action-executor';
 
 interface AgentPanelProps {
   isOpen: boolean;
@@ -11,6 +14,7 @@ interface AgentPanelProps {
 export function AgentPanel({ isOpen, onClose }: AgentPanelProps) {
   const [isListening, setIsListening] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'msg-1',
@@ -26,30 +30,54 @@ export function AgentPanel({ isOpen, onClose }: AgentPanelProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleSend = () => {
-    if (!inputValue.trim()) return;
+  const handleSend = async () => {
+    if (!inputValue.trim() || isProcessing) return;
+    
+    const userText = inputValue.trim();
     
     // Add user message
     const newUserMsg: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: inputValue,
+      content: userText,
       timestamp: new Date(),
     };
     
     setMessages(prev => [...prev, newUserMsg]);
     setInputValue('');
+    setIsProcessing(true);
     
-    // Mock AI response
-    setTimeout(() => {
+    try {
+      // 1. Quét DOM Context hiện tại
+      const domContext = extractDOMContext();
+      
+      // 2. Gửi cho LLM Service để xử lý ý định
+      const response = await processUserIntent(userText, domContext);
+      
+      // 3. Hiển thị tin nhắn trả lời của Agent
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         role: 'agent',
-        content: 'Đây là tin nhắn trả lời tự động từ AI. Hệ thống VLM đang được tích hợp...',
+        content: response.reply,
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, aiResponse]);
-    }, 1000);
+
+      // 4. Thực thi các Action tương ứng (nếu có)
+      for (const action of response.actions) {
+        await executeAction(action);
+      }
+    } catch (error) {
+      console.error('Lỗi khi xử lý agent:', error);
+      setMessages(prev => [...prev, {
+        id: Date.now().toString(),
+        role: 'agent',
+        content: 'Xin lỗi, hệ thống đang bận. Vui lòng thử lại sau.',
+        timestamp: new Date(),
+      }]);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
