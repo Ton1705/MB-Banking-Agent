@@ -1,14 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Fingerprint, Lock, User, Check, Shield } from 'lucide-react';
+import { Fingerprint, Lock, User, Check, Shield, Mic } from 'lucide-react';
+import { VoiceAuthModal } from '@/components/verification/VoiceAuthModal';
 
 export function Login() {
   const navigate = useNavigate();
+  const [isVoiceAuthOpen, setIsVoiceAuthOpen] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    navigate('/');
+  };
+
+  const handleVoiceSuccess = () => {
+    setIsVoiceAuthOpen(false);
     navigate('/');
   };
 
@@ -82,17 +89,36 @@ export function Login() {
               Đăng nhập
             </Button>
             
-            <div className="mt-6 flex justify-center">
+            <div className="mt-6 flex justify-center gap-8">
               <button type="button" className="flex flex-col items-center gap-2 text-slate-500 hover:text-mb-blue transition-colors group">
                 <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-mb-light group-hover:text-mb-blue transition-colors">
                   <Fingerprint className="w-6 h-6" />
                 </div>
-                <span className="text-sm">Đăng nhập bằng Face ID / Vân tay</span>
+                <span className="text-sm font-medium">Face ID / Vân tay</span>
+              </button>
+              
+              <button 
+                type="button" 
+                onClick={() => setIsVoiceAuthOpen(true)}
+                className="flex flex-col items-center gap-2 text-slate-500 hover:text-mb-cyan transition-colors group"
+                data-action="voice-login"
+              >
+                <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-mb-light group-hover:text-mb-cyan transition-colors">
+                  <Mic className="w-6 h-6" />
+                </div>
+                <span className="text-sm font-medium">Giọng nói</span>
               </button>
             </div>
           </form>
         </div>
       </div>
+      
+      <VoiceAuthModal 
+        isOpen={isVoiceAuthOpen} 
+        onClose={() => setIsVoiceAuthOpen(false)} 
+        onSuccess={handleVoiceSuccess}
+        promptText="Đăng nhập vào tài khoản MB Bank của tôi"
+      />
     </div>
   );
 }
