@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react';
+import { Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface AgentButtonProps {
@@ -18,7 +18,7 @@ export function AgentButton({ onClick, isOpen }: AgentButtonProps) {
       data-component="agent-fab"
       data-action="toggle-agent"
     >
-      <Sparkles className={cn("h-6 w-6 transition-transform duration-300", isOpen && "rotate-45")} />
+      <Bot className={cn("h-6 w-6 transition-transform duration-300", isOpen && "rotate-45")} />
     </button>
   );
 }

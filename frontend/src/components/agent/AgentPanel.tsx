@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Mic, Send, MoreHorizontal } from 'lucide-react';
+import { X, Mic, Send, MoreHorizontal, Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MessageBubble, type Message } from './MessageBubble';
 import { extractDOMContext } from '@/lib/agent/dom-parser';
@@ -102,7 +102,7 @@ export function AgentPanel({ isOpen, onClose }: AgentPanelProps) {
       <div className="flex items-center justify-between px-4 py-3 mb-gradient text-white">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm shadow-inner">
-            <SparklesIcon className="h-4 w-4 text-white" />
+            <Bot className="h-4 w-4 text-white" />
           </div>
           <div>
             <h3 className="font-semibold text-sm">MB AI Assistant</h3>
@@ -196,26 +196,3 @@ export function AgentPanel({ isOpen, onClose }: AgentPanelProps) {
   );
 }
 
-// Sparkles icon definition as it's used in the header
-function SparklesIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-      <path d="M5 3v4" />
-      <path d="M19 17v4" />
-      <path d="M3 5h4" />
-      <path d="M17 19h4" />
-    </svg>
-  );
-}
