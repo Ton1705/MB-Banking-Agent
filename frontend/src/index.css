@@ -44,6 +44,8 @@
   --animate-slide-down: slide-down 0.3s ease-out;
   --animate-scale-in: scale-in 0.2s ease-out;
   --animate-shimmer: shimmer 2s infinite linear;
+  --animate-pulse-glow: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-soundwave: soundwave 1s ease-in-out infinite;
 }
 
 @layer base {
@@ -128,6 +130,17 @@
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 15px rgba(0, 180, 216, 0.4); }
+  50% { opacity: 0.85; transform: scale(1.05); box-shadow: 0 0 25px rgba(0, 180, 216, 0.8); }
+}
+
+@keyframes soundwave {
+  0%, 100% { height: 8px; }
+  50% { height: 24px; }
+}
+
 
 /* ─── Utilities ─────────────────────────────────────── */
 .glass {
