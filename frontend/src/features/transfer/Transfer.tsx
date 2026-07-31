@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { CheckCircle2, Loader2, Sparkles, Lock } from 'lucide-react';
+import { CheckCircle2, Loader2, Sparkles, Lock, Mic } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { mockAccounts } from '@/lib/mock-data';
+import { VoiceAuthModal } from '@/components/verification/VoiceAuthModal';
 
 const formatVND = (amount: number) => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
@@ -14,6 +15,7 @@ export function Transfer() {
   const [step, setStep] = useState(1);
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isVoiceAuthOpen, setIsVoiceAuthOpen] = useState(false);
 
   const handleNext = () => {
     if (step < 3) {
@@ -23,6 +25,15 @@ export function Transfer() {
         setStep(step + 1);
       }, 600);
     }
+  };
+
+  const handleVoiceSuccess = () => {
+    setIsVoiceAuthOpen(false);
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setStep(3);
+    }, 600);
   };
 
   const handleReset = () => {
@@ -173,20 +184,33 @@ export function Transfer() {
               </div>
               <div className="bg-amber-50 text-amber-800 p-3 rounded-lg text-sm flex items-start gap-2">
                 <Lock className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                <p>Vui lòng kiểm tra kỹ thông tin trước khi xác nhận. Giao dịch bằng Smart OTP sẽ được tự động điền.</p>
+                <p>Vui lòng kiểm tra kỹ thông tin trước khi xác nhận. Bạn có thể sử dụng Giọng nói để xác thực thay cho Smart OTP.</p>
               </div>
             </CardContent>
-            <CardFooter className="flex gap-4">
-              <Button variant="outline" className="flex-1 h-12" onClick={() => setStep(1)} data-action="back-step">
-                Quay lại
-              </Button>
+            <CardFooter className="flex flex-col gap-3">
+              <div className="flex gap-4 w-full">
+                <Button variant="outline" className="flex-1 h-12" onClick={() => setStep(1)} data-action="back-step">
+                  Quay lại
+                </Button>
+                <Button 
+                  onClick={handleNext} 
+                  className="flex-1 h-12 bg-mb-gradient text-white text-lg font-medium"
+                  disabled={loading}
+                  data-action="confirm-transfer"
+                >
+                  {loading ? <Loader2 className="animate-spin h-5 w-5" /> : 'Xác nhận OTP'}
+                </Button>
+              </div>
+              
               <Button 
-                onClick={handleNext} 
-                className="flex-1 h-12 bg-mb-gradient text-white text-lg font-medium"
+                onClick={() => setIsVoiceAuthOpen(true)}
+                variant="outline"
+                className="w-full h-12 border-mb-cyan text-mb-blue hover:bg-mb-light"
                 disabled={loading}
-                data-action="confirm-transfer"
+                data-action="voice-confirm-transfer"
               >
-                {loading ? <Loader2 className="animate-spin h-5 w-5" /> : 'Xác nhận'}
+                <Mic className="mr-2 h-5 w-5" />
+                Xác thực bằng Giọng nói
               </Button>
             </CardFooter>
           </div>
@@ -233,6 +257,13 @@ export function Transfer() {
           </div>
         )}
       </Card>
+      
+      <VoiceAuthModal 
+        isOpen={isVoiceAuthOpen} 
+        onClose={() => setIsVoiceAuthOpen(false)} 
+        onSuccess={handleVoiceSuccess}
+        promptText={`Xác nhận chuyển ${formatVND(Number(amount) || 0)} tới NGUYEN VAN A`}
+      />
     </div>
   );
 }
